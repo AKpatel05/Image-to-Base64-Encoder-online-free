@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to Base64 Encoder - Online Tool for Developers</title>
+    <meta name="description" content="Encode images (PNG, JPG, GIF, SVG, etc.) to Base64 Data URL format directly in your browser. Useful for embedding images in code and CSS.">
+    <meta name="keywords" content="Image to Base64, convert image to base64, base64 encoder, image encoder, data url, base64 online, image embed, CSS background image base64, developer tool">
+    <meta name="author" content="Your Name or Tool Name"> <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #007bff; /* Blue */
+            --secondary: #6610f2; /* Purple */
+            --error: #dc3545; /* Red */
+            --background-light: #e9ecef; /* Light grey */
+            --border-color: #ced4da; /* Grey border */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(to bottom right, #6a11cb, #2575fc); /* Blue/Purple gradient */
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .tool-description {
+            text-align: center;
+            color: #555;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .input-section, .output-section, .options-section, .status-area {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #f8f9fa; /* Very light background */
+        }
+
+        .drop-zone {
+            border: 3px dashed var(--primary);
+            border-radius: 10px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            margin: 1rem 0;
+            background: var(--background-light);
+            color: #555;
+            font-size: 1.2rem;
+        }
+
+        .drop-zone:hover {
+            background: #e9f1f8; /* Lighter blue hover */
+            border-color: var(--secondary); /* Change border color on hover */
+        }
+
+         .drop-zone.dragover {
+             background: #cce5ff; /* Highlight on drag over */
+             border-style: solid;
+         }
+
+        input[type="file"] {
+            display: none; /* Hide default file input */
+        }
+
+        #imagePreview {
+            display: block; /* Ensure it takes up space */
+            max-width: 100%; /* Make image responsive */
+            max-height: 300px; /* Limit preview height */
+            margin: 1rem auto; /* Center image */
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 5px;
+            background-color: #fff;
+            object-fit: contain; /* Contain image within bounds */
+        }
+
+        #base64Output {
+            width: 100%;
+            min-height: 150px;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-top: 15px;
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+            resize: vertical;
+            background-color: #fff;
+        }
+
+        .output-actions {
+            display: flex;
+            justify-content: flex-end; /* Align buttons to the right */
+            margin-top: 10px;
+        }
+
+        .output-actions button {
+            width: auto; /* Auto width */
+            padding: 10px 15px;
+            font-size: 1em;
+            margin-left: 10px; /* Space between buttons */
+            margin-top: 0; /* Remove top margin from general button style */
+            background-color: var(--secondary); /* Green */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .output-actions button:hover {
+            background-color: #388e3c; /* Darker green */
+        }
+
+        .output-actions button:disabled {
+             background-color: #cccccc;
+             cursor: not-allowed;
+             opacity: 0.7;
+        }
+
+        .options-section label {
+            display: inline-block; /* Align checkbox label */
+            margin-bottom: 0;
+            font-weight: normal;
+            color: #555;
+            margin-right: 15px;
+        }
+
+         .options-section input[type="checkbox"] {
+             vertical-align: middle;
+             margin-right: 5px;
+         }
+
+
+        .status-area {
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary);
+            margin-top: 20px;
+            min-height: 1.5em;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+             .drop-zone {
+                 padding: 2rem 1rem;
+                 font-size: 1rem;
+             }
+             .output-actions {
+                 flex-direction: column; /* Stack buttons vertically */
+                 align-items: stretch; /* Stretch buttons to full width */
+             }
+              .output-actions button {
+                  width: 100%;
+                  margin-left: 0;
+                  margin-bottom: 10px; /* Space between stacked buttons */
+              }
+               .output-actions button:last-child {
+                   margin-bottom: 0;
+               }
+        }
+    </style>
+
+</head>
+<body>
+
+    <div class="container">
+        <h1>Image to Base64 Encoder</h1>
+        <p class="tool-description">Convert your image files (.png, .jpg, .gif, etc.) into a Base64 Data URL string for embedding directly in HTML, CSS, or JavaScript.</p>
+
+        <div class="input-section">
+            <h2>Upload or Drop Image</h2>
+            <div class="drop-zone" id="dropZone">
+                <p>Drag & Drop Image File Here or Click to Upload</p>
+                <input type="file" id="fileInput" accept="image/*" hidden>
+            </div>
+        </div>
+
+        <div class="options-section">
+            <h2>Options</h2>
+            <label>
+                <input type="checkbox" id="base64OnlyCheckbox"> Output Base64 string only (without Data URL prefix)
+            </label>
+        </div>
+
+
+        <div class="output-section" id="outputSection" style="display: none;">
+            <h2>Output (Base64)</h2>
+            <img id="imagePreview" src="#" alt="Image Preview">
+            <textarea id="base64Output" readonly placeholder="Encoded Base64 string will appear here..."></textarea>
+            <div class="output-actions">
+                 <button id="copyBase64Btn">Copy to Clipboard</button>
+                 </div>
+        </div>
+
+        <div class="status-area" id="statusArea">
+            Status: Ready. Please upload or drop an image file.
+        </div>
+
+    </div>
+
+    <script>
+        // Get references to HTML elements
+        const elements = {
+            dropZone: document.getElementById('dropZone'),
+            fileInput: document.getElementById('fileInput'),
+            imagePreview: document.getElementById('imagePreview'),
+            base64Output: document.getElementById('base64Output'),
+            copyBase64Btn: document.getElementById('copyBase64Btn'),
+            statusArea: document.getElementById('statusArea'),
+            outputSection: document.getElementById('outputSection'),
+            base64OnlyCheckbox: document.getElementById('base64OnlyCheckbox')
+        };
+
+        const MAX_FILE_SIZE_MB = 5; // Define max file size in MB
+        const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+
+        let encodedDataUrl = null; // Variable to store the full Data URL
+
+        // --- Drag & Drop Handlers ---
+        elements.dropZone.addEventListener('click', () => elements.fileInput.click());
+        elements.dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault(); // Necessary to allow dropping
+            elements.dropZone.classList.add('dragover');
+            elements.dropZone.textContent = 'Drop your Image File here!'; // Change text on drag over
+        });
+        elements.dropZone.addEventListener('dragleave', () => {
+            elements.dropZone.classList.remove('dragover');
+             elements.dropZone.innerHTML = '<p>Drag & Drop Image File Here or Click to Upload</p>'; // Reset text
+        });
+        elements.dropZone.addEventListener('drop', (e) => {
+            e.preventDefault(); // Necessary to handle the drop
+            elements.dropZone.classList.remove('dragover');
+             elements.dropZone.innerHTML = '<p>Drag & Drop Image File Here or Click to Upload</p>'; // Reset text
+            if(e.dataTransfer.files[0]) {
+                 processFile(e.dataTransfer.files[0]); // Process the dropped file
+            }
+        });
+
+        // --- File Input Handler ---
+        elements.fileInput.addEventListener('change', (e) => {
+            if(e.target.files[0]) {
+                 processFile(e.target.files[0]); // Process the selected file
+            }
+        });
+
+        // --- File Processing and Encoding Logic ---
+        function processFile(file) {
+            // Reset state
+            elements.statusArea.textContent = 'Status: Processing file...';
+            elements.outputSection.style.display = 'none';
+            elements.imagePreview.src = '#'; // Clear previous preview
+            elements.base64Output.value = ''; // Clear previous output
+            elements.copyBase64Btn.disabled = true; // Disable copy button
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                elements.statusArea.textContent = 'Status: Invalid file type. Please upload an image.';
+                alert('Invalid file type. Please upload an image file.');
+                return;
+            }
+
+            // Validate file size
+            if (file.size > MAX_FILE_SIZE_BYTES) {
+                elements.statusArea.textContent = `Status: File too large (max ${MAX_FILE_SIZE_MB}MB).`;
+                alert(`File is too large. Maximum size is ${MAX_FILE_SIZE_MB}MB.`);
+                return;
+            }
+
+
+            const reader = new FileReader();
+
+            // FileReader onload event: This is where the Base64 result is available
+            reader.onload = function(e) {
+                encodedDataUrl = e.target.result; // Store the full Data URL
+
+                // Display image preview
+                elements.imagePreview.src = encodedDataUrl;
+
+                // Display Base64 string (either full Data URL or just Base64 part)
+                updateOutputTextarea(); // Call function to update based on checkbox
+
+                elements.copyBase64Btn.disabled = false; // Enable copy button
+                elements.outputSection.style.display = 'block'; // Show output section
+                elements.statusArea.textContent = `Status: File "${file.name}" encoded successfully.`;
+            };
+
+            // FileReader onerror event
+            reader.onerror = function() {
+                elements.statusArea.textContent = 'Status: Error reading file.';
+                console.error('FileReader error:', reader.error);
+                alert('Error reading file. Please try again.');
+            };
+
+            // Read the file as a Data URL (Base64 encoded string)
+            reader.readAsDataURL(file);
+        }
+
+        // --- Update output text area based on checkbox ---
+        function updateOutputTextarea() {
+             if (encodedDataUrl) {
+                 if (elements.base64OnlyCheckbox.checked) {
+                     // Extract only the Base64 part (after the comma)
+                     elements.base64Output.value = encodedDataUrl.split(',')[1] || '';
+                 } else {
+                     // Show the full Data URL
+                     elements.base64Output.value = encodedDataUrl;
+                 }
+                 // Auto-select the text for easy copying (optional)
+                 // elements.base64Output.select();
+             } else {
+                 elements.base64Output.value = '';
+             }
+        }
+
+        // --- Event listener for the Base64 Only checkbox ---
+        elements.base64OnlyCheckbox.addEventListener('change', updateOutputTextarea);
+
+
+        // --- Copy to Clipboard Logic ---
+        elements.copyBase64Btn.addEventListener('click', function() {
+            const textToCopy = elements.base64Output.value;
+
+            if (!textToCopy) {
+                elements.statusArea.textContent = 'Status: Nothing to copy.';
+                return;
+            }
+
+            // Use the modern Clipboard API
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(textToCopy)
+                    .then(() => {
+                        elements.statusArea.textContent = 'Status: Base64 copied to clipboard!';
+                         // Optional: Briefly change button text or style for feedback
+                    })
+                    .catch(err => {
+                        elements.statusArea.textContent = 'Status: Failed to copy.';
+                        console.error('Failed to copy text: ', err);
+                         // Fallback for older browsers or http
+                         copyToClipboardFallback(textToCopy);
+                    });
+            } else {
+                 // Fallback for older browsers or http
+                 copyToClipboardFallback(textToCopy);
+            }
+        });
+
+        // Fallback copy method for browsers that don't support navigator.clipboard or not on HTTPS/localhost
+        function copyToClipboardFallback(text) {
+             try {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed'; // Position off-screen
+                textarea.style.opacity = 0;
+                document.body.appendChild(textarea);
+                textarea.select();
+                textarea.setSelectionRange(0, 99999); // For mobile devices
+                document.execCommand('copy'); // Execute copy command
+                document.body.removeChild(textarea);
+                elements.statusArea.textContent = 'Status: Base64 copied to clipboard (fallback)!';
+             } catch (err) {
+                 elements.statusArea.textContent = 'Status: Failed to copy (fallback failed).';
+                 console.error('Fallback copy failed: ', err);
+             }
+        }
+
+
+        // --- Initial State ---
+        elements.statusArea.textContent = 'Status: Ready. Please upload or drop an image file.';
+        elements.copyBase64Btn.disabled = true; // Disable copy button initially
+        elements.imagePreview.style.display = 'none'; // Hide preview initially
+
+
+    </script>
+
+</body>
+</html>
